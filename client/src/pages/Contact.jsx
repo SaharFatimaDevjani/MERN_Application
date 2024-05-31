@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Footer from "../components/Footer";
 import Header from "../components/Header";
+import banner from './contact.jpg'
 
 const ContactForm = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -13,6 +14,13 @@ const ContactForm = () => {
   return (
     <>
       <Header />
+      <div className='banner'>
+        <img src={banner} alt="logo" />
+      </div>
+      <div className='container home'> 
+          <h2 className='page-heading'>Contact Us</h2>
+          
+      </div>
       <div className="contact-container">
         {isSubmitted ? (
           <div className="thank-you-message">

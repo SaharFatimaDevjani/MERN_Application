@@ -3,7 +3,7 @@ import Header from "../components/Header";
 import Footer from '../components/Footer';
 import { Link } from "react-router-dom";
 import about3 from './about3.jpg';
-import banner from './banner.avif'; 
+import banner from './aboutbanner.jpg'; 
 
 
 const About = () => {
