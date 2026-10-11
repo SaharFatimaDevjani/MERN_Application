@@ -1,144 +1,77 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useMemo, useState } from 'react';
 
-const ProductList = () => {
-  const [products, setProducts] = useState([]);
+const formatPrice = (price) =>
+  new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(price) || 0);
 
-  const [product, setProduct] = useState({
-    _id: '',
-    name: '',
-    description: '',
-    price: '',
-    category: ''
-  });
+const ProductList = ({ products, loading, error, onEdit, onDelete, onRetry }) => {
+  const [query, setQuery] = useState('');
 
-  const productHandler = (e) => {
-    const { name, value } = e.target;
-    setProduct({ ...product, [name]: value });
-  };
-
-  const fetchProducts = async () => {
-    try {
-      const response = await axios.get("http://localhost:5000/readAllProducts");
-      setProducts(response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const deleteHandler = async (id) => {
-    try {
-      await axios.delete(`http://localhost:5000/delete/${id}`);
-      fetchProducts();
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  const updateProduct = (id, name, description, price, category) => {
-    setProduct({
-      _id: id,
-      name,
-      description,
-      price,
-      category
-    });
-  };
-
-  const submitUpdatedProduct = async (e) => {
-    e.preventDefault();
-    try {
-      await axios.put(`http://localhost:5000/update/${product._id}`, product);
-      fetchProducts();
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) return products;
+    return products.filter((p) =>
+      [p.name, p.category, p.description].some((v) => String(v || '').toLowerCase().includes(q))
+    );
+  }, [products, query]);
 
   return (
-    <>
-      <div className="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div className="modal-dialog">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h1 className="modal-title fs-5" id="staticBackdropLabel">Update Product</h1>
-              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div className="modal-body">
-              <form onSubmit={submitUpdatedProduct}>
-                <div className="mb-3 mt-3"></div>
-                <div className="mt-3">
-                  <input
-                    type="text"
-                    name="name"
-                    className="form-control"
-                    placeholder="Enter Product Name"
-                    value={product.name}
-                    onChange={productHandler}
-                  />
-                </div>
-                <div className="mt-3">
-                  <input
-                    type="text"
-                    name="description"
-                    className="form-control"
-                    placeholder="Enter Product Description"
-                    value={product.description}
-                    onChange={productHandler}
-                  />
-                </div>
-                <div className="mt-3">
-                  <input
-                    type="text"
-                    name="price"
-                    className="form-control"
-                    placeholder="Enter Product Price"
-                    value={product.price}
-                    onChange={productHandler}
-                  />
-                </div>
-                <div className="mt-3">
-                  <input
-                    type="text"
-                    name="category"
-                    className="form-control"
-                    placeholder="Enter Product Category"
-                    value={product.category}
-                    onChange={productHandler}
-                  />
-                </div>
-                <br />
-                <button type="submit" style={{ width: '250px' }} className="btn button">Submit</button>
-              </form>
-            </div>
-          </div>
+    <div className="card">
+      <div className="card-head">
+        <div>
+          <h2>Product List</h2>
+          <p className="muted">{products.length} product{products.length === 1 ? '' : 's'} in store</p>
+        </div>
+        <div className="search">
+          <i className="fa-solid fa-magnifying-glass"></i>
+          <input
+            type="search"
+            placeholder="Search products…"
+            aria-label="Search products"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
         </div>
       </div>
-      <div className="mt-3">
-        <h1>Product List</h1>
-        <div className='list-group'>
-          {products.map((product) => (
-            <li key={product._id} className="list-group-item list-group-item-success">
-              {product.name} - {product.price}
-              <i
-                className="fa-regular fa-pen-to-square"
-                onClick={() => updateProduct(product._id, product.name, product.description, product.price, product.category)}
-                data-bs-toggle="modal"
-                data-bs-target="#staticBackdrop"
-              ></i>
-              <i
-                className="fa-solid fa-trash"
-                onClick={() => deleteHandler(product._id)}
-              ></i>
+
+      {loading && <div className="state">Loading products…</div>}
+
+      {!loading && error && (
+        <div className="state state--error">
+          <p>{error}</p>
+          <button type="button" className="btn-ghost" onClick={onRetry}>Try again</button>
+        </div>
+      )}
+
+      {!loading && !error && filtered.length === 0 && (
+        <div className="state">
+          <i className="fa-solid fa-box-open state-icon"></i>
+          <p>{products.length === 0 ? 'No products yet. Add your first one!' : 'No products match your search.'}</p>
+        </div>
+      )}
+
+      {!loading && !error && filtered.length > 0 && (
+        <ul className="product-grid">
+          {filtered.map((product) => (
+            <li key={product._id} className="product-card">
+              <div className="product-card__top">
+                <span className="badge">{product.category}</span>
+                <span className="price">{formatPrice(product.price)}</span>
+              </div>
+              <h3>{product.name}</h3>
+              <p className="muted">{product.description}</p>
+              <div className="product-card__actions">
+                <button type="button" className="icon-btn" onClick={() => onEdit(product)} aria-label={`Edit ${product.name}`}>
+                  <i className="fa-regular fa-pen-to-square"></i> Edit
+                </button>
+                <button type="button" className="icon-btn icon-btn--danger" onClick={() => onDelete(product)} aria-label={`Delete ${product.name}`}>
+                  <i className="fa-solid fa-trash"></i> Delete
+                </button>
+              </div>
             </li>
           ))}
-        </div>
-      </div>
-    </>
+        </ul>
+      )}
+    </div>
   );
 };
 

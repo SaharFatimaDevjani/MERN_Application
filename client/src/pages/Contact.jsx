@@ -1,69 +1,98 @@
 import React, { useState } from 'react';
-import Footer from "../components/Footer";
-import Header from "../components/Header";
-import banner from './contact.jpg'
+import Layout from '../components/Layout';
+import PageHero from '../components/PageHero';
+import banner from './contact.jpg';
+
+const emptyForm = { name: '', email: '', subject: '', message: '' };
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const validate = (form) => {
+  const errors = {};
+  if (!form.name.trim()) errors.name = 'Please enter your name';
+  if (!form.email.trim()) errors.email = 'Please enter your email';
+  else if (!emailPattern.test(form.email)) errors.email = 'Please enter a valid email address';
+  if (!form.subject.trim()) errors.subject = 'Please enter a subject';
+  if (!form.message.trim()) errors.message = 'Please write a message';
+  return errors;
+};
 
 const ContactForm = () => {
+  const [form, setForm] = useState(emptyForm);
+  const [errors, setErrors] = useState({});
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+    if (errors[name]) setErrors({ ...errors, [name]: undefined });
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setIsSubmitted(true);
+    const nextErrors = validate(form);
+    setErrors(nextErrors);
+    if (Object.keys(nextErrors).length === 0) {
+      setIsSubmitted(true);
+      setForm(emptyForm);
+    }
   };
 
-  return (
-    <>
-      <Header />
-      <div className='banner'>
-        <img src={banner} alt="logo" />
-      </div>
-      <div className='container home'> 
-          <h2 className='page-heading'>Contact Us</h2>
-          
-      </div>
-      <div className="contact-container">
-        {isSubmitted ? (
-          <div className="thank-you-message">
-            <h2>Thank you for messaging us!</h2>
-            <p>We'll get back to you soon.</p>
-          </div>
-        ) : (
-          <div className="contact-form-wrapper">
-            <div className="form-container">
-              <h2>Get in touch</h2>
-              <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                  <label htmlFor="name">Name:</label>
-                  <input type="text" id="name" name="name" required />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="email">Email:</label>
-                  <input type="email" id="email" name="email" required />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="subject">Subject:</label>
-                  <input type="text" id="subject" name="subject" required />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="message">Message:</label>
-                  <textarea id="message" name="message" rows="4" required></textarea>
-                </div>
-                <button type="submit" className="button">Send Message</button>
-              </form>
-            </div>
-            <div className="contact-info">
-              <h3>Contact us</h3>
-              <p><strong>Address:</strong> 1234 Street Name, City, State, 56789</p>
-              <p><strong>Phone:</strong> +1 234 567 890</p>
-              <p><strong>Email:</strong> contact@example.com</p>
-              <p><strong>Website:</strong> www.example.com</p>
-            </div>
-          </div>
-        )}
-      </div>
-      <Footer />
-    </>
+  const field = (name, label, type = 'text') => (
+    <div className="field">
+      <label htmlFor={name}>{label}</label>
+      {type === 'textarea' ? (
+        <textarea id={name} name={name} rows="5" value={form[name]} onChange={handleChange} className={errors[name] ? 'has-error' : ''} />
+      ) : (
+        <input id={name} name={name} type={type} value={form[name]} onChange={handleChange} className={errors[name] ? 'has-error' : ''} />
+      )}
+      {errors[name] && <span className="field-error">{errors[name]}</span>}
+    </div>
   );
-}
+
+  return (
+    <Layout>
+      <PageHero image={banner} title="Contact Us" subtitle="We'd love to hear from you." />
+
+      <section className="section">
+        <div className="wrap">
+          <div className="contact-card">
+            <div className="contact-info">
+              <h2>Contact information</h2>
+              <p>Reach out and our team will get back to you within one business day.</p>
+              <ul>
+                <li><i className="fa-solid fa-location-dot"></i> 1234 Street Name, City, State, 56789</li>
+                <li><i className="fa-solid fa-phone"></i> +1 234 567 890</li>
+                <li><i className="fa-solid fa-envelope"></i> contact@example.com</li>
+                <li><i className="fa-solid fa-globe"></i> www.example.com</li>
+              </ul>
+            </div>
+
+            <div className="contact-form">
+              {isSubmitted ? (
+                <div className="thank-you">
+                  <i className="fa-solid fa-circle-check"></i>
+                  <h2>Thank you for messaging us!</h2>
+                  <p className="muted">We'll get back to you soon.</p>
+                  <button type="button" className="btn-ghost" onClick={() => setIsSubmitted(false)}>Send another message</button>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} noValidate>
+                  <h2>Get in touch</h2>
+                  <div className="field-row">
+                    {field('name', 'Name')}
+                    {field('email', 'Email', 'email')}
+                  </div>
+                  {field('subject', 'Subject')}
+                  {field('message', 'Message', 'textarea')}
+                  <button type="submit" className="btn-primary btn-block">Send Message</button>
+                </form>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+    </Layout>
+  );
+};
 
 export default ContactForm;

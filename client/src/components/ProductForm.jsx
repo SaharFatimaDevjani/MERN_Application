@@ -1,78 +1,92 @@
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from 'react';
 
-const ProductForm = () => {
-  const [product, setProduct] = useState({
-    name: '',
-    description: '',
-    price: '',
-    category: ''
-  }) 
-  
+const emptyProduct = { name: '', description: '', price: '', category: '' };
+
+const validate = (product) => {
+  const errors = {};
+  if (!product.name.trim()) errors.name = 'Name is required';
+  if (!product.description.trim()) errors.description = 'Description is required';
+  if (product.price === '' || Number.isNaN(Number(product.price))) {
+    errors.price = 'Enter a valid price';
+  } else if (Number(product.price) < 0) {
+    errors.price = 'Price cannot be negative';
+  }
+  if (!product.category.trim()) errors.category = 'Category is required';
+  return errors;
+};
+
+// Used both for adding a product and for editing one inside the modal.
+const ProductForm = ({ initialValues, onSubmit, submitLabel = 'Add Product', resetOnSuccess = true }) => {
+  const [product, setProduct] = useState(initialValues || emptyProduct);
+  const [errors, setErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    setProduct(initialValues || emptyProduct);
+    setErrors({});
+  }, [initialValues]);
+
   const productHandler = (e) => {
     const { name, value } = e.target;
     setProduct({ ...product, [name]: value });
-  }
-  
-  const insertProduct = async () => {
-    try{
-      const response = await axios.post("http://localhost:5000/addproduct",product)
-      console.log(response.data)
-    }catch(error){
-      console.error("Error Adding products:", error);
-    }
-  }
+    if (errors[name]) setErrors({ ...errors, [name]: undefined });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const nextErrors = validate(product);
+    setErrors(nextErrors);
+    if (Object.keys(nextErrors).length > 0) return;
+
+    setSubmitting(true);
+    const ok = await onSubmit({ ...product, price: Number(product.price) });
+    setSubmitting(false);
+    if (ok && resetOnSuccess) setProduct(emptyProduct);
+  };
+
+  const field = (name, label, props = {}) => (
+    <div className="field">
+      <label htmlFor={`product-${name}`}>{label}</label>
+      {props.as === 'textarea' ? (
+        <textarea
+          id={`product-${name}`}
+          name={name}
+          rows="3"
+          value={product[name]}
+          onChange={productHandler}
+          className={errors[name] ? 'has-error' : ''}
+          placeholder={props.placeholder}
+        />
+      ) : (
+        <input
+          id={`product-${name}`}
+          name={name}
+          type={props.type || 'text'}
+          value={product[name]}
+          onChange={productHandler}
+          className={errors[name] ? 'has-error' : ''}
+          placeholder={props.placeholder}
+          min={props.min}
+          step={props.step}
+        />
+      )}
+      {errors[name] && <span className="field-error">{errors[name]}</span>}
+    </div>
+  );
 
   return (
-      <form className="mainForm">  
-
-     <h2 className="mt-3">Add Product</h2>
-     <div className="mb-3 mt-3" ></div>
-      <div className="mt-3">
-        <input
-          type="text"
-          name="name"
-          className="form-control"
-          placeholder="Enter Product Name"
-          value={product.name}
-          onChange={productHandler}
-        />
+    <form className="product-form" onSubmit={handleSubmit} noValidate>
+      {field('name', 'Product name', { placeholder: 'e.g. Wireless Headphones' })}
+      {field('description', 'Description', { as: 'textarea', placeholder: 'Short description of the product' })}
+      <div className="field-row">
+        {field('price', 'Price ($)', { type: 'number', min: '0', step: '0.01', placeholder: '0.00' })}
+        {field('category', 'Category', { placeholder: 'e.g. Electronics' })}
       </div>
-      <div className="mt-3">
-        <input
-          type="text"
-          name="description"
-          className="form-control"
-          placeholder="Enter Product Description"
-          value={product.description}
-          onChange={productHandler}
-        />
-      </div>
-      <div className="mt-3">
-        <input
-          type="text"
-          name="price"
-          className="form-control"
-          placeholder="Enter Product Price"
-          value={product.price}
-          onChange={productHandler}
-        />
-      </div>
-      <div className="mt-3">
-        <input
-          type="text"
-          name="category"
-          className="form-control"
-          placeholder="Enter Product Category"
-          value={product.category}
-          onChange={productHandler}
-        />
-      </div>   
-      
-      <br></br>
-      <button type='submit' onClick={()=>{insertProduct()}} style={{width:'250px'}} className="btn button">Submit</button>
+      <button type="submit" className="btn-primary btn-block" disabled={submitting}>
+        {submitting ? 'Saving…' : submitLabel}
+      </button>
     </form>
   );
-}
+};
 
 export default ProductForm;

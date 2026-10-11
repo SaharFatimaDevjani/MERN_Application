@@ -10,45 +10,48 @@ This is a full-stack web application built using the **MERN** stack (MongoDB, Ex
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/SaharFatimaDevjani/MERN-Project.git
-cd MERN-Project
+git clone https://github.com/SaharFatimaDevjani/MERN_Application.git
+cd MERN_Application
 ```
 
 ### 2. Install Dependencies
 
 - For the backend:  
   ```bash
-  cd backend
+  cd server
   npm install
   ```
 
 - For the frontend:  
   ```bash
-  cd frontend
+  cd client
   npm install
   ```
 
 ### 3. Environment Variables
 
-Create a `.env` file in the `backend` directory and add:
+Create a `.env` file in the `server` directory (see `server/.env.example`) and add:
 
 ```
 MONGO_URI=your_mongo_db_uri
 PORT=5000
 ```
 
-> Make sure MongoDB is running and the URI is correct.
+> Make sure MongoDB is running and the URI is correct. If `MONGO_URI` is not set, the server uses `mongodb://localhost:27017/Shopping`.
+>
+> The client calls the API at `http://localhost:5000` by default. To change it, create `client/.env` with `REACT_APP_API_URL=http://your-api-host`.
 
 ### 4. Run the App
 
 - Start backend server:  
   ```bash
+  cd server
   npm run server
   ```
 
 - Start frontend dev server (in a new terminal):  
   ```bash
-  cd frontend
+  cd client
   npm start
   ```
 
@@ -77,7 +80,7 @@ App will be accessible at: http://localhost:3000/
 
 ## 🔗 GitHub Repository
 
-**GitHub:** [https://github.com/SaharFatimaDevjani/MERN-Project]
+**GitHub:** [https://github.com/SaharFatimaDevjani/MERN_Application](https://github.com/SaharFatimaDevjani/MERN_Application)
 
 ---
 

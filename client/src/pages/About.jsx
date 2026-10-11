@@ -1,57 +1,61 @@
-
-import Header from "../components/Header";
-import Footer from '../components/Footer';
-import { Link } from "react-router-dom";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import Layout from '../components/Layout';
+import PageHero from '../components/PageHero';
 import about3 from './about3.jpg';
-import banner from './aboutbanner.jpg'; 
+import banner from './aboutbanner.jpg';
 
+const values = [
+  { icon: 'fa-bullseye', title: 'Our Mission', text: 'To make quality products accessible to everyone with a simple and honest shopping experience.' },
+  { icon: 'fa-eye', title: 'Our Vision', text: 'To be the most trusted neighbourhood store — online and offline.' },
+  { icon: 'fa-handshake', title: 'Our Promise', text: 'Fair prices, careful service and a team that listens to its customers.' },
+];
 
 const About = () => {
   return (
-    <>
-      <Header />
-      <div>
-      <div className='banner'>
-        <img src={banner} alt="logo" />
-      </div>
-      <div className='container home'> 
-          <h2 className='page-heading'>About</h2>
-          <h2 className='choose'>About us</h2>
-          <p className='page-para'>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptas, obcaecati veniam quo provident, quidem, commodi qui similique optio eveniet animi aut! Facere laudantium officia, qui corporis placeat itaque temporibus? Magni sint vitae, beatae, dolorum reiciendis exercitationem incidunt mollitia aperiam dignissimos provident laborum eligendi eveniet. Laudantium assumenda reiciendis eligendi veniam nulla.</p>
-          
-      </div>
-      <div></div>
-      <div className='hundred back'>
-        <div className='container flex'>
-          <div className='flexchild1'>
-            <h2>Heading 2</h2>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quod officia aperiam qui rem eius, eum odit esse sapiente mollitia at repellendus distinctio iste. Lorem ipsum dolor sit amet consectetur adipisicing elit. Distinctio, omnis unde voluptas nisi pariatur placeat dicta vel sequi odio beatae qui quisquam similique nostrum. Laboriosam officia hic quis suscipit ex nemo consequatur, quidem eos est dolorem, ad aut praesentium. Beatae! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ad qui molestiae, cupiditate repudiandae dicta adipisci consectetur quos veritatis aliquam corrupti quod dolore sapiente quidem delectus ea maiores esse iure dolor facere voluptas hic porro magnam accusamus! Voluptatem fugiat impedit distinctio ad libero suscipit laudantium natus, reiciendis nam quibusdam eos sed enim aut.</p>
-            <button className='button'><Link to="/product" style={{ color: '#fff', textDecoration: 'none' }}>Products</Link></button>
+    <Layout>
+      <PageHero image={banner} title="About Us" subtitle="The story behind Heaven Traders." />
+
+      <section className="section">
+        <div className="wrap split">
+          <div>
+            <span className="eyebrow">Who we are</span>
+            <h2>A small team with a big focus on quality</h2>
+            <p className="muted">
+              Heaven Traders started with a simple idea: people deserve products they can rely on, at prices that
+              make sense. Today we serve customers across the region with a carefully curated catalogue.
+            </p>
+            <p className="muted">
+              We work directly with suppliers, check every item ourselves and keep our range up to date so you
+              always find what you need.
+            </p>
+            <Link to="/product" className="btn-primary">See Our Products</Link>
           </div>
-          <div className='flexchild2'>
-            <img className='about-image' src={about3} alt="home1" />
+          <div className="image-frame">
+            <img src={about3} alt="Our team at work" />
           </div>
         </div>
-        
-      </div>
-      <div className='container flex three-sec'>
-          <div className='child'>
-            <h3>Heading 3</h3>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Excepturi officia voluptate asperiores blanditiis, pariatur est eum fugiat nostrum minus facere explicabo ea nisi. Ea, temporibus alias voluptas eligendi atque accusantium ratione, nam optio doloremque dolorem sed nemo sapiente quo eum commodi quam similique illo tempora dolores adipisci praesentium omnis quis.</p>
+      </section>
+
+      <section className="section section--alt">
+        <div className="wrap">
+          <div className="section-title">
+            <span className="eyebrow">What drives us</span>
+            <h2>Our values</h2>
           </div>
-          <div className='child'>
-            <h3>Heading 3</h3>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Excepturi officia voluptate asperiores blanditiis, pariatur est eum fugiat nostrum minus facere explicabo ea nisi. Ea, temporibus alias voluptas eligendi atque accusantium ratione, nam optio doloremque dolorem sed nemo sapiente quo eum commodi quam similique illo tempora dolores adipisci praesentium omnis quis.</p>
-          </div>
-          <div className='child'>
-            <h3>Heading 3</h3>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Excepturi officia voluptate asperiores blanditiis, pariatur est eum fugiat nostrum minus facere explicabo ea nisi. Ea, temporibus alias voluptas eligendi atque accusantium ratione, nam optio doloremque dolorem sed nemo sapiente quo eum commodi quam similique illo tempora dolores adipisci praesentium omnis quis.</p>
+          <div className="feature-grid">
+            {values.map((v) => (
+              <div className="feature" key={v.title}>
+                <div className="feature__icon"><i className={`fa-solid ${v.icon}`}></i></div>
+                <h3>{v.title}</h3>
+                <p className="muted">{v.text}</p>
+              </div>
+            ))}
           </div>
         </div>
-      </div>
-      <Footer/>
-    </>
+      </section>
+    </Layout>
   );
-}
+};
 
 export default About;
