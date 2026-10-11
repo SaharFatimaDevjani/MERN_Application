@@ -1,56 +1,78 @@
 import React from 'react';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
+import { Link } from 'react-router-dom';
+import Layout from '../components/Layout';
+import PageHero from '../components/PageHero';
 import home1 from './home1.jpg';
 import home2 from './home2.jpg';
 import banner from './banner.avif';
-import { Link } from 'react-router-dom';
+
+const features = [
+  { icon: 'fa-truck-fast', title: 'Fast Delivery', text: 'Orders are packed the same day and shipped quickly to your doorstep.' },
+  { icon: 'fa-shield-halved', title: 'Trusted Quality', text: 'Every product is checked by our team before it reaches our shelves.' },
+  { icon: 'fa-headset', title: 'Friendly Support', text: 'Questions about an order? Our team is here to help, seven days a week.' },
+];
 
 const Home = () => {
   return (
-    <div className=' home'>
-      <Header />
-      <div className='banner'>
-        <img src={banner} alt="logo" />
-      </div>
-      <div className='container home'> 
-          <h2 className='page-heading'>Home</h2>
-          <h2 className='choose'>Why Choose us?</h2>
-          <p className='page-para'>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Voluptas, obcaecati veniam quo provident, quidem, commodi qui similique optio eveniet animi aut! Facere laudantium officia, qui corporis placeat itaque temporibus? Magni sint vitae, beatae, dolorum reiciendis exercitationem incidunt mollitia aperiam dignissimos provident laborum eligendi eveniet. Laudantium assumenda reiciendis eligendi veniam nulla.</p>
-          
-      </div>
-      <div></div>
-      <div className='hundred back'>
-        <div className='container flex'>
-          <div className='flexchild1'>
-            <h2>Heading 2</h2>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Quod officia aperiam qui rem eius, eum odit esse sapiente mollitia at repellendus distinctio iste. Lorem ipsum dolor sit amet consectetur adipisicing elit. Distinctio, omnis unde voluptas nisi pariatur placeat dicta vel sequi odio beatae qui quisquam similique nostrum. Laboriosam officia hic quis suscipit ex nemo consequatur, quidem eos est dolorem, ad aut praesentium. Beatae! Lorem, ipsum dolor sit amet consectetur adipisicing elit. Ad qui molestiae, cupiditate repudiandae dicta adipisci consectetur quos veritatis aliquam corrupti quod dolore sapiente quidem delectus ea maiores esse iure dolor facere voluptas hic porro magnam accusamus! Voluptatem fugiat impedit distinctio ad libero suscipit laudantium natus, reiciendis nam quibusdam eos sed enim aut.</p>
-            <button className='button'><Link to="/product" style={{ color: '#fff', textDecoration: 'none' }}>Products</Link></button>
+    <Layout>
+      <PageHero
+        large
+        image={banner}
+        title="Quality products, delivered with care"
+        subtitle="Heaven Traders brings you a hand-picked catalogue of everyday essentials at honest prices."
+      >
+        <div className="hero-actions">
+          <Link to="/product" className="btn-primary">Browse Products</Link>
+          <Link to="/contact" className="btn-outline-light">Contact Us</Link>
+        </div>
+      </PageHero>
+
+      <section className="section">
+        <div className="wrap">
+          <div className="section-title">
+            <span className="eyebrow">Why choose us</span>
+            <h2>Shopping made simple</h2>
+            <p className="muted">We focus on the things that matter: great products, fair prices and service you can count on.</p>
           </div>
-          <div className='flexchild2'>
-          <img  className='img2'src={home2} alt="home2" />
-            <img className='img1' src={home1} alt="home1" />
+          <div className="feature-grid">
+            {features.map((f) => (
+              <div className="feature" key={f.title}>
+                <div className="feature__icon"><i className={`fa-solid ${f.icon}`}></i></div>
+                <h3>{f.title}</h3>
+                <p className="muted">{f.text}</p>
+              </div>
+            ))}
           </div>
         </div>
-        
-      </div>
-      <div className='container flex three-sec'>
-          <div className='child'>
-            <h3>Heading 3</h3>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Excepturi officia voluptate asperiores blanditiis, pariatur est eum fugiat nostrum minus facere explicabo ea nisi. Ea, temporibus alias voluptas eligendi atque accusantium ratione, nam optio doloremque dolorem sed nemo sapiente quo eum commodi quam similique illo tempora dolores adipisci praesentium omnis quis.</p>
+      </section>
+
+      <section className="section section--alt">
+        <div className="wrap split">
+          <div>
+            <span className="eyebrow">Our store</span>
+            <h2>Everything you need, all in one place</h2>
+            <p className="muted">
+              From electronics to home goods, our catalogue keeps growing. Manage the full product list from
+              the Products page — add new items, update prices and remove what you no longer stock.
+            </p>
+            <Link to="/product" className="btn-primary">View Products</Link>
           </div>
-          <div className='child'>
-            <h3>Heading 3</h3>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Excepturi officia voluptate asperiores blanditiis, pariatur est eum fugiat nostrum minus facere explicabo ea nisi. Ea, temporibus alias voluptas eligendi atque accusantium ratione, nam optio doloremque dolorem sed nemo sapiente quo eum commodi quam similique illo tempora dolores adipisci praesentium omnis quis.</p>
-          </div>
-          <div className='child'>
-            <h3>Heading 3</h3>
-            <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Excepturi officia voluptate asperiores blanditiis, pariatur est eum fugiat nostrum minus facere explicabo ea nisi. Ea, temporibus alias voluptas eligendi atque accusantium ratione, nam optio doloremque dolorem sed nemo sapiente quo eum commodi quam similique illo tempora dolores adipisci praesentium omnis quis.</p>
+          <div className="image-stack">
+            <img src={home2} alt="Store showcase" />
+            <img src={home1} alt="Featured products" />
           </div>
         </div>
-      <Footer/>
-    </div>
+      </section>
+
+      <section className="section">
+        <div className="wrap stats">
+          <div><strong>500+</strong><span>Products</span></div>
+          <div><strong>10k+</strong><span>Happy customers</span></div>
+          <div><strong>24/7</strong><span>Support</span></div>
+        </div>
+      </section>
+    </Layout>
   );
-}
+};
 
 export default Home;

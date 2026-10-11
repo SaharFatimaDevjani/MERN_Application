@@ -1,9 +1,8 @@
 import { render, screen } from '@testing-library/react';
 import App from './App';
 
-test('renders learn react link', () => {
+test('renders the site header and home hero', () => {
   render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+  expect(screen.getAllByText(/heaven traders/i).length).toBeGreaterThan(0);
+  expect(screen.getByRole('heading', { level: 1, name: /quality products/i })).toBeInTheDocument();
 });
-
